@@ -3,8 +3,6 @@ FROM alpine:3.7
 LABEL MAINTAINER_MAIL="zdl0812@163.com"
 LABEL MAINTAINER_VERSION="v0.1.0-20190123"
 
-ENV http_proxy="http://user:123@10.164.4.134:808"
-ENV https_proxy="http://user:123@10.164.4.134:808"
 ENV TIMEZONE="Asia/Shanghai"
 ENV LUAJIT_LIB=/usr/lib/
 ENV LUAJIT_INC=/usr/include/luajit-2.0
@@ -99,9 +97,6 @@ RUN mkdir -p /var/tmp/nginx/{client,fastcgi,proxy,uwsgi} &&\
     rm -rf /opt/redis2-nginx-module-0.14.tar.gz
     
 COPY nginx.conf  /etc/nginx/nginx.conf
-    
-ENV http_proxy=
-ENV https_proxy=
     
 ENV PATH /usr/local/nginx/sbin:$PATH
 EXPOSE 80
