@@ -5,7 +5,7 @@ LABEL MAINTAINER_VERSION="v0.1.0-20190123"
 
 ENV TIMEZONE="Asia/Shanghai"
 ENV LUAJIT_LIB=/usr/lib/
-ENV LUAJIT_INC=/usr/include/luajit-2.0
+ENV LUAJIT_INC=/usr/include/luajit-2.1
 
 RUN addgroup -S nginx &&\
     adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx &&\
