@@ -29,7 +29,13 @@ RUN mkdir /opt && cd /opt &&\
     curl -k https://people.freebsd.org/~osa/ngx_http_redis-0.3.9.tar.gz -o ngx_http_redis-0.3.9.tar.gz &&\
     tar -xf ngx_http_redis-0.3.9.tar.gz &&\
     curl -k https://codeload.github.com/openresty/redis2-nginx-module/tar.gz/v0.14 -o redis2-nginx-module-0.14.tar.gz &&\
-    tar -xf redis2-nginx-module-0.14.tar.gz
+    tar -xf redis2-nginx-module-0.14.tar.gz &&\
+    curl -k https://codeload.github.com/google/ngx_brotli/zip/master -o ngx_brotli.zip &&\
+    unzip ngx_brotli.zip &&\
+    curl -k https://codeload.github.com/google/brotli/tar.gz/v1.0.7 -o brotli-1.0.7.tar.gz &&\
+    tar -xf brotli-1.0.7.tar.gz &&\
+    rmdir ngx_brotli-master/deps/brotli/ &&\
+    cp -r brotli-1.0.7 ngx_brotli-master/deps/brotli/
     
 RUN cd /opt/nginx-1.13.6 &&\
     ./configure \
@@ -79,6 +85,7 @@ RUN cd /opt/nginx-1.13.6 &&\
     --add-module=/opt/nginx-module-vts-0.1.18 \
     --add-module=/opt/nginx-module-sts-0.1.1 \
     --add-module=/opt/nginx-module-stream-sts-0.1.1 \
+    --add-module=/opt/ngx_brotli-master \
     --with-ld-opt="-Wl,-rpath,/usr/lib" \
     --add-module=/opt/lua-nginx-module-0.10.13 \
     --add-module=/opt/ngx_devel_kit-0.3.0 \
@@ -94,7 +101,9 @@ RUN mkdir -p /var/tmp/nginx/{client,fastcgi,proxy,uwsgi} &&\
     rm -rf /opt/ngx_devel_kit-0.3.0.tar.gz &&\
     rm -rf /opt/lua-nginx-module-0.10.13.tar.gz &&\
     rm -rf /opt/ngx_http_redis-0.3.9.tar.gz &&\
-    rm -rf /opt/redis2-nginx-module-0.14.tar.gz
+    rm -rf /opt/redis2-nginx-module-0.14.tar.gz &&\
+    rm -rf /opt/ngx_brotli.zip &&\
+    rm -rf /opt/brotli-1.0.7.tar.gz
     
 COPY nginx.conf  /etc/nginx/nginx.conf
     
