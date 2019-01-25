@@ -1,7 +1,8 @@
 FROM alpine:3.8
 
 LABEL MAINTAINER_MAIL="zdl0812@163.com"
-LABEL MAINTAINER_VERSION="v0.1.0-20190123"
+LABEL MAINTAINER_NGINX="1.13.6"
+LABEL MAINTAINER_ALPINE="3.8"
 
 ENV TIMEZONE="Asia/Shanghai"
 ENV LUAJIT_LIB=/usr/lib/
@@ -9,7 +10,7 @@ ENV LUAJIT_INC=/usr/include/luajit-2.1
 
 RUN addgroup -S nginx &&\
     adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx &&\
-    apk add --update --no-cache git openssh curl luajit-dev geoip-dev pcre-dev libxslt-dev-2.1 gd-dev openssl-dev zlib-dev gcc make libc-dev linux-headers gnupg1 &&\
+    apk add --update-cache --no-cache git openssh curl luajit-dev geoip-dev pcre-dev 'libxslt-dev>2.1' gd-dev openssl-dev zlib-dev gcc make libc-dev linux-headers gnupg1 &&\
     rm -rf /var/cache/apk/*
     
 RUN mkdir /opt && cd /opt &&\
