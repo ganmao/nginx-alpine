@@ -31,8 +31,6 @@ RUN mkdir /opt && cd /opt &&\
     tar -xf redis2-nginx-module-0.14.tar.gz
     
 RUN cd /opt &&\
-    git config --global http.proxy 'socks5://user:123@10.164.4.134:1080' &&\
-    git config --global https.proxy 'socks5://user:123@10.164.4.134:1080' &&\
     git config --global http.sslVerify false &&\
     git clone https://github.com/google/ngx_brotli.git &&\
     cd /opt/ngx_brotli && git submodule update --init
