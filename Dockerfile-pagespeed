@@ -1,14 +1,23 @@
+###############################
+# Use alpine 3.8 nginx 1.13.6 #
+###############################
 FROM alpine:3.8
 
+# Set maintainer info
 LABEL MAINTAINER_MAIL="zdl0812@163.com"
 LABEL MAINTAINER_NGINX="1.13.6"
 LABEL MAINTAINER_ALPINE="3.8"
 
+# Set Timezone
 ENV TIMEZONE="Asia/Shanghai"
 
+# Set Luajit build info
 ENV LUAJIT_LIB=/usr/lib/
 ENV LUAJIT_INC=/usr/include/luajit-2.1
 
+###############################
+# Get nginx modules src       #
+###############################
 RUN addgroup -S nginx &&\
     adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx &&\
     apk add --no-cache \
@@ -51,6 +60,10 @@ RUN cd /opt &&\
     git clone https://github.com/google/ngx_brotli.git &&\
     cd /opt/ngx_brotli && git submodule update --init
     
+###############################
+# Get & Build PSOL            #
+###############################
+    
 ENV MOD_PAGESPEED_TAG=v1.13.35.2
 ENV NGX_PAGESPEED_TAG=v1.13.35.2-stable
 ENV NGINX_VERSION=1.13.6
@@ -84,13 +97,16 @@ RUN cd /opt &&\
               https://github.com/apache/incubator-pagespeed-mod.git \
               modpagespeed \
     ;
-
+    
+# Applying Alpine patch
 COPY pagespeed/patches/*.patch /opt/modpagespeed/
-
-RUN for i in *.patch; do printf "\r\nApplying patch ${i%%.*}\r\n"; patch -p1 < $i || exit 1; done
-
-RUN cd /opt/modpagespeed/tools/gyp && ./setup.py install
-
+    
+RUN cd /opt/modpagespeed/ && \
+    for i in *.patch; do printf "\r\nApplying patch ${i%%.*}\r\n"; patch -p1 < $i || exit 1; done
+    
+RUN cd /opt/modpagespeed/tools/gyp &&\
+    ./setup.py install
+    
 RUN cd /opt/modpagespeed &&\
     build/gyp_chromium --depth=. \
                        -D use_system_libs=1 && \
@@ -100,7 +116,8 @@ RUN cd /opt/modpagespeed &&\
               CXXFLAGS+="-I/usr/include/apr-1 -DUCHAR_TYPE=uint16_t" \
               -j`nproc` \
     ;
-
+    
+# Copy psol to ngxpagespeed
 RUN mkdir -p /opt/ngxpagespeed/psol/lib/Release/linux/x64 && \
     mkdir -p /opt/ngxpagespeed/psol/include/out/Release && \
     cp -R out/Release/obj /opt/ngxpagespeed/psol/include/out/Release/ && \
@@ -113,6 +130,10 @@ RUN mkdir -p /opt/ngxpagespeed/psol/lib/Release/linux/x64 && \
           /opt/ngxpagespeed/psol/include/ \
     ;
     
+###############################
+# Get Pagespeed               #
+###############################
+    
 RUN cd /opt &&\
     git clone -b ${NGX_PAGESPEED_TAG} \
               --recurse-submodules \
@@ -123,6 +144,10 @@ RUN cd /opt &&\
               https://github.com/apache/incubator-pagespeed-ngx.git \
               ngxpagespeed \
     ;
+    
+###############################
+# Build Nginx                 #
+###############################
     
 RUN cd /opt/nginx-1.13.6 &&\
     ./configure \
