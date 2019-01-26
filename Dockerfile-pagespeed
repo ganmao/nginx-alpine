@@ -13,14 +13,12 @@ RUN addgroup -S nginx &&\
     adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx &&\
     apk add --no-cache \
             git \
-            openssh \
             curl \
             'luajit-dev>2.1' \
             geoip-dev \
             pcre-dev \
             libxslt-dev \
             gd-dev \
-            openssl-dev \
             zlib-dev \
             gcc \
             make \
