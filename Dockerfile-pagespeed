@@ -68,7 +68,7 @@ RUN cd /opt &&\
               modpagespeed \
     ;
 
-COPY patches/modpagespeed/*.patch /opt/modpagespeed
+COPY patches/*.patch /opt/modpagespeed/
 
 RUN for i in *.patch; do printf "\r\nApplying patch ${i%%.*}\r\n"; patch -p1 < $i || exit 1; done
 
