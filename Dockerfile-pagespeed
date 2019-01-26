@@ -11,7 +11,23 @@ ENV LUAJIT_INC=/usr/include/luajit-2.1
 
 RUN addgroup -S nginx &&\
     adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx &&\
-    apk add --update-cache --no-cache git openssh curl 'luajit-dev>2.1' geoip-dev pcre-dev libxslt-dev gd-dev openssl-dev zlib-dev gcc make libc-dev linux-headers gnupg1 &&\
+    apk add --no-cache \
+            git \
+            openssh \
+            curl \
+            'luajit-dev>2.1' \
+            geoip-dev \
+            pcre-dev \
+            libxslt-dev \
+            gd-dev \
+            openssl-dev \
+            zlib-dev \
+            gcc \
+            make \
+            libc-dev \
+            linux-headers \
+            gnupg1 \
+    ; &&\
     rm -rf /var/cache/apk/*
     
 RUN mkdir /opt && cd /opt &&\
@@ -37,17 +53,16 @@ RUN cd /opt &&\
     git clone https://github.com/google/ngx_brotli.git &&\
     cd /opt/ngx_brotli && git submodule update --init
     
-ENV ALPINE_VERSION=3.8
 ENV MOD_PAGESPEED_TAG=v1.13.35.2
+ENV NGX_PAGESPEED_TAG=v1.13.35.2-stable
+ENV NGINX_VERSION=1.13.6
     
 RUN apk add --no-cache \
         apache2-dev \
         apr-dev \
         apr-util-dev \
         build-base \
-        curl \
         gettext-dev \
-        git \
         gperf \
         icu-dev \
         libjpeg-turbo-dev \
@@ -55,9 +70,13 @@ RUN apk add --no-cache \
         libressl-dev \
         pcre-dev \
         py-setuptools \
-        zlib-dev \
-    ;
-
+        ca-certificates \
+        git \
+        gnupg \
+    ; &&\
+    rm -rf /var/cache/apk/*
+    
+    
 RUN cd /opt &&\
     git clone -b ${MOD_PAGESPEED_TAG} \
               --recurse-submodules \
@@ -68,7 +87,7 @@ RUN cd /opt &&\
               modpagespeed \
     ;
 
-COPY patches/*.patch /opt/modpagespeed/
+COPY pagespeed/patches/*.patch /opt/modpagespeed/
 
 RUN for i in *.patch; do printf "\r\nApplying patch ${i%%.*}\r\n"; patch -p1 < $i || exit 1; done
 
@@ -96,29 +115,6 @@ RUN mkdir -p /opt/ngxpagespeed/psol/lib/Release/linux/x64 && \
           /opt/ngxpagespeed/psol/include/ \
     ;
     
-ENV NGX_PAGESPEED_TAG=v1.13.35.2-stable
-ENV NGINX_VERSION=1.13.6
-
-RUN apk add --no-cache \
-        apr-dev \
-        apr-util-dev \
-        build-base \
-        ca-certificates \
-        gd-dev \
-        geoip-dev \
-        git \
-        gnupg \
-        icu-dev \
-        libjpeg-turbo-dev \
-        libpng-dev \
-        libxslt-dev \
-        linux-headers \
-        libressl-dev \
-        pcre-dev \
-        tar \
-        zlib-dev \
-    ;
-    
 RUN cd /opt &&\
     git clone -b ${NGX_PAGESPEED_TAG} \
               --recurse-submodules \
@@ -129,8 +125,6 @@ RUN cd /opt &&\
               https://github.com/apache/incubator-pagespeed-ngx.git \
               ngxpagespeed \
     ;
-    
-COPY --from=pagespeed /opt/ngxpagespeed /opt/ngxpagespeed/
     
 RUN cd /opt/nginx-1.13.6 &&\
     ./configure \
@@ -181,13 +175,14 @@ RUN cd /opt/nginx-1.13.6 &&\
     --add-module=/opt/nginx-module-sts-0.1.1 \
     --add-module=/opt/nginx-module-stream-sts-0.1.1 \
     --with-ld-opt="-Wl,-rpath,/usr/lib" \
-    --add-module=/opt/ngxpagespeed \
-    --with-ld-opt="-Wl,-z,relro,-rpath,/usr/lib --start-group -lapr-1 -laprutil-1 -licudata -licuuc -lpng -lturbojpeg -ljpeg" \
     --add-module=/opt/ngx_brotli \
     --add-module=/opt/lua-nginx-module-0.10.13 \
     --add-module=/opt/ngx_devel_kit-0.3.0 \
     --add-module=/opt/ngx_http_redis-0.3.9 \
-    --add-module=/opt/redis2-nginx-module-0.14 &&\
+    --add-module=/opt/redis2-nginx-module-0.14 \
+    --add-module=/opt/ngxpagespeed \
+    --with-ld-opt="-Wl,-z,relro,-rpath,/usr/lib --start-group -lapr-1 -laprutil-1 -licudata -licuuc -lpng -lturbojpeg -ljpeg" \
+    &&\
     make -j2 && make install
     
 RUN mkdir -p /var/tmp/nginx/{client,fastcgi,proxy,uwsgi} &&\
@@ -198,8 +193,7 @@ RUN mkdir -p /var/tmp/nginx/{client,fastcgi,proxy,uwsgi} &&\
     rm -rf /opt/ngx_devel_kit-0.3.0.tar.gz &&\
     rm -rf /opt/lua-nginx-module-0.10.13.tar.gz &&\
     rm -rf /opt/ngx_http_redis-0.3.9.tar.gz &&\
-    rm -rf /opt/redis2-nginx-module-0.14.tar.gz &&\
-    rm -rf /opt/ngx_brotli
+    rm -rf /opt/redis2-nginx-module-0.14.tar.gz
     
 COPY nginx.conf  /etc/nginx/nginx.conf
     
