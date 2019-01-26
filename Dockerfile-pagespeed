@@ -118,7 +118,8 @@ RUN cd /opt/modpagespeed &&\
     ;
     
 # Copy psol to ngxpagespeed
-RUN mkdir -p /opt/ngxpagespeed/psol/lib/Release/linux/x64 && \
+RUN cd /opt/modpagespeed &&\
+    mkdir -p /opt/ngxpagespeed/psol/lib/Release/linux/x64 && \
     mkdir -p /opt/ngxpagespeed/psol/include/out/Release && \
     cp -R out/Release/obj /opt/ngxpagespeed/psol/include/out/Release/ && \
     cp -R pagespeed/automatic/pagespeed_automatic.a /opt/ngxpagespeed/psol/lib/Release/linux/x64/ && \
