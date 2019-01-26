@@ -27,7 +27,7 @@ RUN addgroup -S nginx &&\
             libc-dev \
             linux-headers \
             gnupg1 \
-    ; &&\
+    &&\
     rm -rf /var/cache/apk/*
     
 RUN mkdir /opt && cd /opt &&\
@@ -73,7 +73,7 @@ RUN apk add --no-cache \
         ca-certificates \
         git \
         gnupg \
-    ; &&\
+    &&\
     rm -rf /var/cache/apk/*
     
     
