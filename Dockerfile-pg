@@ -257,7 +257,7 @@ RUN addgroup -S nginx && \
 
 EXPOSE 80
 
-ENV PATH /usr/local/nginx/sbin:$PATH
+ENV PATH /usr/sbin:$PATH
 
 STOPSIGNAL SIGTERM
 
