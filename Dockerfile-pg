@@ -229,7 +229,7 @@ COPY pagespeed/pagespeed.png /usr/share/nginx/html/
 FROM alpine:$ALPINE_VERSION
 LABEL maintainer="zdl0812@163.com" \
       version.mod-pagespeed="1.13.35.2" \
-      version.nginx="1.14.1" \
+      version.nginx="1.13.6" \
       version.ngx-pagespeed="1.13.35.2"
 
 ENV TIMEZONE="Asia/Shanghai"
