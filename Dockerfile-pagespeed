@@ -198,16 +198,15 @@ RUN cd /opt/nginx-1.13.6 &&\
     --add-module=/opt/nginx-module-vts-0.1.18 \
     --add-module=/opt/nginx-module-sts-0.1.1 \
     --add-module=/opt/nginx-module-stream-sts-0.1.1 \
-    --with-ld-opt="-Wl,-rpath,/usr/lib" \
     --add-module=/opt/ngx_brotli \
     --add-module=/opt/lua-nginx-module-0.10.13 \
     --add-module=/opt/ngx_devel_kit-0.3.0 \
     --add-module=/opt/ngx_http_redis-0.3.9 \
     --add-module=/opt/redis2-nginx-module-0.14 \
     --add-module=/opt/ngxpagespeed \
-    --with-ld-opt="-Wl,-z,relro,-rpath,/usr/lib --start-group -lapr-1 -laprutil-1 -licudata -licuuc -lpng -lturbojpeg -ljpeg" \
+    --with-ld-opt="-Wl,-z,relro,--start-group -lapr-1 -laprutil-1 -licudata -licuuc -lpng -lturbojpeg -ljpeg" \
     &&\
-    make -j2 && make install
+    make -j`nproc` && make install
     
 RUN mkdir -p /var/tmp/nginx/{client,fastcgi,proxy,uwsgi} &&\
     rm -rf /opt/nginx-1.13.6.tar.gz &&\
