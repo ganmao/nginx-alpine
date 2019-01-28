@@ -117,20 +117,6 @@ RUN cd /opt/modpagespeed &&\
               -j`nproc` \
     ;
     
-# Copy psol to ngxpagespeed
-RUN cd /opt/modpagespeed &&\
-    mkdir -p /opt/ngxpagespeed/psol/lib/Release/linux/x64 && \
-    mkdir -p /opt/ngxpagespeed/psol/include/out/Release && \
-    cp -R out/Release/obj /opt/ngxpagespeed/psol/include/out/Release/ && \
-    cp -R pagespeed/automatic/pagespeed_automatic.a /opt/ngxpagespeed/psol/lib/Release/linux/x64/ && \
-    cp -R net \
-          pagespeed \
-          testing \
-          third_party \
-          url \
-          /opt/ngxpagespeed/psol/include/ \
-    ;
-    
 ###############################
 # Get Pagespeed               #
 ###############################
@@ -144,6 +130,20 @@ RUN cd /opt &&\
               -j`nproc` \
               https://github.com/apache/incubator-pagespeed-ngx.git \
               ngxpagespeed \
+    ;
+    
+# Copy psol to ngxpagespeed
+RUN cd /opt/modpagespeed &&\
+    mkdir -p /opt/ngxpagespeed/psol/lib/Release/linux/x64 && \
+    mkdir -p /opt/ngxpagespeed/psol/include/out/Release && \
+    cp -R out/Release/obj /opt/ngxpagespeed/psol/include/out/Release/ && \
+    cp -R pagespeed/automatic/pagespeed_automatic.a /opt/ngxpagespeed/psol/lib/Release/linux/x64/ && \
+    cp -R net \
+          pagespeed \
+          testing \
+          third_party \
+          url \
+          /opt/ngxpagespeed/psol/include/ \
     ;
     
 ###############################
