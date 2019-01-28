@@ -38,7 +38,7 @@ RUN git clone -b ${MOD_PAGESPEED_TAG} \
 
 WORKDIR /usr/src/modpagespeed
 
-COPY patches/modpagespeed/*.patch ./
+COPY pagespeed/patches/*.patch ./
 
 RUN for i in *.patch; do printf "\r\nApplying patch ${i%%.*}\r\n"; patch -p1 < $i || exit 1; done
 
@@ -219,9 +219,9 @@ RUN rm -rf /etc/nginx/html/ && \
           /usr/lib/nginx/modules/*.so \
     ;
 
-COPY conf/nginx.conf /etc/nginx/nginx.conf
-COPY conf/nginx.vh.default.conf /etc/nginx/conf.d/default.conf
-COPY pagespeed.png /usr/share/nginx/html/
+COPY pagespeed/conf/nginx.conf /etc/nginx/nginx.conf
+COPY pagespeed/conf/nginx.vh.default.conf /etc/nginx/conf.d/default.conf
+COPY pagespeed/pagespeed.png /usr/share/nginx/html/
 
 ##########################################
 # Combine everything with minimal layers #
