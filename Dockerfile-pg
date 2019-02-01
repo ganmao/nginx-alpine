@@ -146,6 +146,12 @@ RUN apk add --no-cache \
         tar \
         curl \
         zlib-dev \
+        curl \
+        'luajit-dev>2.1' \
+        gcc \
+        make \
+        libc-dev \
+        gnupg1 \
     ;
 
 WORKDIR /usr/src
